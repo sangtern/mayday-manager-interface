@@ -57,10 +57,16 @@ App.get("/products", (req, res) => {
     fetchQuery(res, DB, "SELECT * FROM PRODUCT ORDER BY itemID" );
 });
 
+App.get("/vehicles", (req, res) => {
+    fetchQuery(res, DB, `SELECT * FROM VEHICLES
+                        ORDER BY itemID`);
+});
+
 App.get("/utilities", (req, res) => {
     fetchQuery(res, DB, `SELECT * FROM UTILITIES ut
                         LEFT JOIN PRODUCT p
-                        ON ut.itemID=p.itemID`);
+                        ON ut.itemID=p.itemID
+                        ORDER BY itemID`);
 });
 
 App.get("/medicalaid", (req, res) => {
@@ -68,13 +74,15 @@ App.get("/medicalaid", (req, res) => {
                         LEFT JOIN PRODUCT p
                         ON m.itemID=p.itemID
                         LEFT JOIN DIAGNOSE_TREATS dt
-                        ON m.itemID=dt.itemID`)
+                        ON m.itemID=dt.itemID
+                        ORDER BY itemID`)
 });
 
 App.get("/food_water", (req, res) => {
     fetchQuery(res, DB, `SELECT * FROM FOOD_WATER fw
                         LEFT JOIN PRODUCT p
-                        ON fw.itemID=p.itemID`);
+                        ON fw.itemID=p.itemID
+                        ORDER BY itemID`);
 });
 
 /* ORGANIZATIONDEPOT

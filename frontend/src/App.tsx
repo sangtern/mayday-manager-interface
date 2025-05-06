@@ -18,7 +18,8 @@ const pages = [
     {name: "volunteers", key_index: 0},
     {name: "victims", key_index: 0},
     {name: "depotadmins", key_index: 0},
-    {name: "products", key_index: 3}
+    {name: "products", key_index: 3},
+    {name: "vehicles", key_index: 0}
 ];
 
 const App = () => {
@@ -26,7 +27,6 @@ const App = () => {
     const [ data, setData ] = useState<Array<Object>>([]);
 
     useEffect(() => {
-        console.log("Page value:", page);
         fetch(`http://localhost:8081/${page}`)
             .then(res => res.json())
             .then(res_data => setData(res_data))
