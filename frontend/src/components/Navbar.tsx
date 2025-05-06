@@ -1,3 +1,4 @@
+import { useCallback, useMemo, MouseEvent } from "react";
 import { Pages } from "../interfaces/Pages";
 
 interface Props {
@@ -7,19 +8,22 @@ interface Props {
 };
 
 const Navbar = ({ pages, page, setPage }: Props) => {
-    const navlinks = pages.map(p => {
+    const handleClick = useCallback((event: MouseEvent, new_page: string) => {
+        event.preventDefault();
+        setPage(new_page)
+    }, []);
+
+    const navlinks = useMemo(() => pages.map(p => {
         let name = p.name;
-        return (
-            <a key={"nav_" + name} className={name === page ? "nav-link" : "nav-link disabled"}>
+        return <a key={ "nav_" + name } className="nav-link" aria-disabled={name === page ? "false": "true"} onClick={e => handleClick(e, name)}>
                 { name.charAt(0).toUpperCase() + name.slice(1) }
             </a>
-        );
-    });
-
+    }), [page]);
+    
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
-                <a className="navbar-brand" href="/">Mayday Manager</a>
+                <a key="maydaymanager" className="navbar-brand">Mayday Manager</a>
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
                         {navlinks}

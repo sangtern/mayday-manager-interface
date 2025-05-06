@@ -1,4 +1,4 @@
 export interface Pages {
-    name: String;
-    key_index: Number;
+    name: string;
+    key_index: number;
 }
