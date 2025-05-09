@@ -1,49 +1,39 @@
-import { useState, useEffect, useMemo } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-import Navbar from './components/Navbar.tsx';
-import TableInterface from './components/TableInterface.tsx';
+import Register from './components/Register.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import Login from './components/Login.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+import PageNotFound from './components/PageNotFound.tsx';
+
 import 'bootstrap/dist/css/bootstrap.css';
 
-function getPrimaryFromName(name: string) {
-    for(let i = 0; i < pages.length; i++) {
-        if (pages[i].name === name) {
-            return pages[i].key_index;
-        }
-    }
-    return 0;
-}
-
-const pages = [
-    {name: "users", key_index: 0},
-    {name: "volunteers", key_index: 0},
-    {name: "victims", key_index: 0},
-    {name: "depotadmins", key_index: 0},
-    {name: "products", key_index: 3},
-    {name: "vehicles", key_index: 0}
-];
-
 const App = () => {
-    const [ page, setPage ] = useState<string>("users");
-    const [ data, setData ] = useState<Array<Object>>([]);
-
-    useEffect(() => {
-        fetch(`http://localhost:8081/${page}`)
-            .then(res => res.json())
-            .then(res_data => setData(res_data))
-            .catch(err => console.error(err));
-    }, [page]);
-    
-    const headings = useMemo(() => data.length > 0 ? Object.keys(data[0]) : [], [data]);
-    const rows = useMemo(() => data.map( d => Object.values(d).map(i => i ? i.toString() : null) ), [data]);
-    
     return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+
+                <Route path="/dashboard" element={
+                    <ProtectedRoute allowedRoles={['admin', 'volunteer', 'victim']}>
+                        <Dashboard />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="*" element={<PageNotFound />} />
+            </Routes>
+        </BrowserRouter>
+    );
+
+/*    return (
         <>
            <Navbar pages={pages} page={page} setPage={setPage} />
            <div className="container-lg" id="table-container">
                { data.length > 0 ? <TableInterface primary={getPrimaryFromName(page)} headings={headings} rows={rows} /> : <p>No data</p> }
            </div>
         </>
-    );
+    ); */
 };
 
 export default App;
