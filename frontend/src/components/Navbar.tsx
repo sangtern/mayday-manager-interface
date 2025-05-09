@@ -1,5 +1,5 @@
 import { useCallback, useMemo, MouseEvent } from "react";
-import { useAuth } from '../components/AuthContext.tsx';
+
 import Pages from "../interfaces/Pages";
 
 interface Props {
@@ -9,19 +9,25 @@ interface Props {
 };
 
 const Navbar = ({ pages, page, setPage }: Props) => {
-    const { user } = useAuth();
-
     const handleClick = useCallback((event: MouseEvent, new_page: string) => {
         event.preventDefault();
+        console.log(`Clicked to ${new_page}`);
         setPage(new_page)
     }, []);
 
     const navlinks = useMemo(() => pages.map(p => {
         let name = p.name;
+        return <a key={ "nav_" + name.toLowerCase() } className="nav-link" onClick={e => handleClick(e, name)} >
+                {name}
+            </a>
+    }), [page])
+
+/*    const navlinks = useMemo(() => pages.map(p => {
+        let name = p.name;
         return <a key={ "nav_" + name } className="nav-link" aria-disabled={name === page ? "false": "true"} onClick={e => handleClick(e, name)}>
                 { name.charAt(0).toUpperCase() + name.slice(1) }
             </a>
-    }), [page]);
+    }), [page]); */
     
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">

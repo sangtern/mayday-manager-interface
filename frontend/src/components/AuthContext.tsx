@@ -1,18 +1,18 @@
-import { useState, useEffect, useContext, createContext, PropsWithChildren } from 'react';
+import { useState, useContext, createContext, PropsWithChildren } from 'react';
 import User from '../interfaces/User';
 
 export interface AuthInterface {
     user?: User | undefined;
-    setUser?: Function | undefined;
+    setUser: Function;
     isLoggedIn: boolean;
-    setLoggedIn?: Function | undefined;
+    setLoggedIn: Function;
 };
 
 const AuthContext = createContext<AuthInterface>({
     user: undefined,
-    setUser: undefined,
+    setUser: () => {},
     isLoggedIn: false,
-    setLoggedIn: undefined
+    setLoggedIn: () => {}
 });
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
