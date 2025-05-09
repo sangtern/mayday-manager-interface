@@ -1,5 +1,6 @@
 import { useCallback, useMemo, MouseEvent } from "react";
-import { Pages } from "../interfaces/Pages";
+import { useAuth } from '../components/AuthContext.tsx';
+import Pages from "../interfaces/Pages";
 
 interface Props {
     pages: Pages[];
@@ -8,6 +9,8 @@ interface Props {
 };
 
 const Navbar = ({ pages, page, setPage }: Props) => {
+    const { user } = useAuth();
+
     const handleClick = useCallback((event: MouseEvent, new_page: string) => {
         event.preventDefault();
         setPage(new_page)
