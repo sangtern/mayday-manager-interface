@@ -25,7 +25,8 @@ const Register = () => {
     });
 
     const handleChanges = (event: ChangeEvent) => {
-        setValues({ ...values, [event.target.name]: event.target.value });
+        const target = event.target as HTMLTextAreaElement;
+        setValues({ ...values, [target.name]: target.value });
     };
 
     const handleSubmit = async (event: FormEvent) => {

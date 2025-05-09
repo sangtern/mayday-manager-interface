@@ -51,9 +51,6 @@ const App = Express();
 App.use(Express.json());
 App.use(cors());
 
-// Serve static files from Vite
-App.use(Express.static(path.join(__dirname, "../frontend/dist")));
-
 // API Handling
 App.post("/api/register", (req, res) => {
     const { email, name, password, role } = req.body;
@@ -130,92 +127,61 @@ App.post("/api/login", (req, res) => {
     });
 });
 
-App.get("/api/users", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM USERACCOUNTS`);
+App.get("/api/reliefrequests/:role", (req, res) => {
+    const { role } = req.params;
+
+    switch(role) {
+        case "victim":
+            fetchQuery(res, DB, "SELECT * FROM VictimReliefRequests");
+            break;
+        case "volunteer":
+            fetchQuery(res, DB, "SELECT * FROM VolunteerReliefRequests");
+            break;
+        case "admin":
+            fetchQuery(res, DB, "SELECT * FROM AdminReliefRequests");
+            break;
+    };
 });
 
-App.get("/api/victims", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM VICTIMS vi
-                        LEFT JOIN RELIEFREQUEST rf
-                        ON vi.vi_email=rf.vi_email
-                        LEFT JOIN USERACCOUNTS u
-                        ON vi.vi_email=u.uemail`);
+App.get("/api/products/:role", (req, res) => {
+    const { role } = req.params;
+
+    switch(role) {
+        case "volunteer":
+            fetchQuery(res, DB, "SELECT * FROM VolunteerProducts");
+            break;
+        case "admin":
+            fetchQuery(res, DB, "SELECT * FROM AdminProducts");
+            break;
+    };
 });
 
-App.get("/api/volunteers", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM VOLUNTEERS vo
-                        LEFT JOIN SKILLS s ON vo.vo_email=s.vo_email
-                        LEFT JOIN USERACCOUNTS u ON vo.vo_email=u.uemail`);
+App.get("/api/depots/:role", (req, res) => {
+    const { role } = req.params;
+
+    if (!role === "admin") return res.json("Invalid permission");
+
+    fetchQuery(res, DB, "SELECT * FROM AdminDepots");
 });
 
-App.get("/api/depotadmins", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM DEPOTADMINS da
-                            LEFT JOIN USERACCOUNTS u
-                            ON da.da_email=u.uemail`);
+App.get("/api/volunteers/:role", (req, res) => {
+    const { role } = req.params;
+
+    if (!role === "admin") return res.json("Invalid permission");
+
+    fetchQuery(res, DB, "SELECT * FROM AdminVolunteers");
 });
 
-App.get("/api/products", (req, res) => {
-    fetchQuery(res, DB, "SELECT * FROM PRODUCT ORDER BY itemID" );
+App.get("/api/victims/:role", (req, res) => {
+    const { role } = req.params;
+
+    if (!role === "admin") return res.json("Invalid permission");
+
+    fetchQuery(res, DB, "SELECT * FROM AdminVictims");
 });
 
-App.get("/api/vehicles", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM VEHICLES
-                        ORDER BY itemID`);
-});
-
-App.get("/api/utilities", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM UTILITIES ut
-                        LEFT JOIN PRODUCT p
-                        ON ut.itemID=p.itemID
-                        ORDER BY itemID`);
-});
-
-App.get("/api/medicalaid", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM MEDICALAID m
-                        LEFT JOIN PRODUCT p
-                        ON m.itemID=p.itemID
-                        LEFT JOIN DIAGNOSE_TREATS dt
-                        ON m.itemID=dt.itemID
-                        ORDER BY itemID`)
-});
-
-App.get("/api/food_water", (req, res) => {
-    fetchQuery(res, DB, `SELECT * FROM FOOD_WATER fw
-                        LEFT JOIN PRODUCT p
-                        ON fw.itemID=p.itemID
-                        ORDER BY itemID`);
-});
-
-/* ORGANIZATIONDEPOT
-    * FUNDINGSOURCE
-    * RELIEFINVENTORY
-    * SUPPLIER
-    * DISASTEREVENT
-    * CITIESAFFECTED
-    * PAYS
-    * DELIVERY
-    * SELFENROLL
-    * TASKEDAT
-    * DRIVER
-    * RECRUIT
-    * SUPERVISE
-    * AFFECTED
-    * MAKES
-    * MANAGES
-    * ORDERS
-    * REQUESTS
-    * SELLS
-    * RECEIVEFROMSUPPLIER
-    * INVENTORYTRANSFER
-    * DROPOFF
-    * CANUSE
-    */
-
-// URLS not handled by Express will be directed to Vite React's
-// index.html file
-App.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname + "../frontend/dist/index.html"));
-});
+// Serve static files from Vite
+App.use(Express.static(path.join(__dirname, "../frontend/dist")));
 
 App.listen(PORT, (res, req) => {
     console.log(`Listening on ${PORT}...`);

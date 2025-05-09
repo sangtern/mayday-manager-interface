@@ -1,5 +1,6 @@
 export default interface Pages {
     name: string;
-    key_index: number;
-    allowedRoles: string[];
+    api: string;
+    key_index?: number | null;
+    allowedRoles?: string[] | null;
 };
