@@ -1,6 +1,7 @@
 import { useCallback, useMemo, MouseEvent } from "react";
 
 import Pages from "../interfaces/Pages";
+import { useAuth } from "./AuthContext";
 
 interface Props {
     pages: Pages[];
@@ -9,6 +10,8 @@ interface Props {
 };
 
 const Navbar = ({ pages, page, setPage }: Props) => {
+    const { user } = useAuth();
+
     const handleClick = useCallback((event: MouseEvent, new_page: string) => {
         event.preventDefault();
         console.log(`Clicked to ${new_page}`);
@@ -16,10 +19,12 @@ const Navbar = ({ pages, page, setPage }: Props) => {
     }, []);
 
     const navlinks = useMemo(() => pages.map(p => {
-        let name = p.name;
-        return <a key={ "nav_" + name.toLowerCase() } className="nav-link" onClick={e => handleClick(e, name)} >
-                {name}
-            </a>
+        if (p.allowedRoles && user && p.allowedRoles.includes(user?.role)) {
+            let name = p.name;
+            return <a key={ "nav_" + name.toLowerCase() } className="nav-link" onClick={e => handleClick(e, name)} >
+                    {name}
+                </a>
+        } else return null;
     }), [page])
 
 /*    const navlinks = useMemo(() => pages.map(p => {

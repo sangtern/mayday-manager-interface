@@ -8,18 +8,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 const Login = () => {
     const navigate = useNavigate();
     
-    const { user, setUser, isLoggedIn, setLoggedIn } = useAuth();
+    const { user, setUser, setLoggedIn } = useAuth();
 
     const [ userLogin, setUserLogin ] = useState<string>("");
     const [ pass, setPass ] = useState<string>("");
 
-    if (isLoggedIn) {
-        navigate("/dashboard");
-    }
-
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        fetch("/api/login", {
+        fetch("http://localhost:8081/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
