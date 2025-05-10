@@ -31,16 +31,15 @@ const Register = () => {
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        console.log("Registration values:", values);
         try {
-            const response = await fetch("/api/register", {
+            const response = await fetch("http://localhost:8081/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(values)
             });
-            response.json().then(res_data => {
+            response.json().then((res_data) => {
                 console.log(res_data);
                 navigate("/login");
             });

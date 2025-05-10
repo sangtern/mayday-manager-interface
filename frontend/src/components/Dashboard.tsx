@@ -13,22 +13,6 @@ function getPrimaryFromName(name: string) {
     return 0;
 }
 
-function getApiFromName(name: string) {
-    for(let i = 0; i < pages.length; i++) {
-        if (pages[i].name === name)
-            return pages[i].api;
-    }
-}
-
-function getFirstMatchingPage(role: string) {
-    for(let i = 0; i < pages.length; i++) {
-        if (pages[i].allowedRoles.includes(role))
-            return pages[i].name;
-    }
-
-    return "Relief Requests";
-}
-
 const pages = [
     { name: "Relief Requests", api: "reliefrequests", key_index: 0, allowedRoles: [ "volunteer", "victim", "admin" ] },
     { name: "Products", api: "products", key_index: 0, allowedRoles: [ "volunteer", "admin" ] },
@@ -43,17 +27,25 @@ const Dashboard = () => {
     const [ page, setPage ] = useState<string>("Relief Requests");
     const [ data, setData ] = useState<Array<Object>>([]);
 
+    const api = useMemo(() => {
+        for(let i = 0; i < pages.length; i++) {
+            const pp = pages[i];
+            if (pp.name === page) {
+                return pp.api;
+            }
+        }
+        return "reliefrequests";
+    }, [page]);
+
     useEffect(() => {
-        setPage(getFirstMatchingPage(user?.role || ""));
+        console.log("Dashboard: page changed! New page:", page);
 
-        const api = getApiFromName(page);
-
-        console.log(`API URL: /api/${api}/:${user?.role || "user"}`);
-        fetch(`/api/${api}/:${user?.role || "user"}`)
+        console.log("Passing the following api:", api);
+        fetch(`http://localhost:8081/${api}/${user?.role || "victim"}/${user?.email}`)
             .then(res => res.json())
             .then(res_data => setData(res_data))
             .catch(err => console.error(err));
-    }, [page]);
+    }, [page, api]);
 
     console.log(data);
     

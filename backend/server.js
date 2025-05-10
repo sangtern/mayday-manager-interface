@@ -52,7 +52,7 @@ App.use(Express.json());
 App.use(cors());
 
 // API Handling
-App.post("/api/register", (req, res) => {
+App.post("/register", (req, res) => {
     const { email, name, password, role } = req.body;
 
     console.log(req.body);
@@ -95,7 +95,7 @@ App.post("/api/register", (req, res) => {
     });
 });
 
-App.post("/api/login", (req, res) => {
+App.post("/login", (req, res) => {
     const { username, password } = req.body;
 
     const query = "SELECT * FROM USERACCOUNTS WHERE uemail = ?";
@@ -121,18 +121,19 @@ App.post("/api/login", (req, res) => {
                     role: role
                 };
                 res.json(new_user);
+                console.log(`${username}'s new role: ${role}`);
             });
         }
         else return res.json("Invalid credentials");
     });
 });
 
-App.get("/api/reliefrequests/:role", (req, res) => {
-    const { role } = req.params;
+App.get("/reliefrequests/:role/:email", (req, res) => {
+    const { role, email } = req.params;
 
     switch(role) {
         case "victim":
-            fetchQuery(res, DB, "SELECT * FROM VictimReliefRequests");
+            fetchQuery(res, DB, `SELECT * FROM VictimReliefRequests WHERE vi_email = '${email}'`);
             break;
         case "volunteer":
             fetchQuery(res, DB, "SELECT * FROM VolunteerReliefRequests");
@@ -143,7 +144,7 @@ App.get("/api/reliefrequests/:role", (req, res) => {
     };
 });
 
-App.get("/api/products/:role", (req, res) => {
+App.get("/products/:role/:email", (req, res) => {
     const { role } = req.params;
 
     switch(role) {
@@ -156,7 +157,7 @@ App.get("/api/products/:role", (req, res) => {
     };
 });
 
-App.get("/api/depots/:role", (req, res) => {
+App.get("/depots/:role/:email", (req, res) => {
     const { role } = req.params;
 
     if (!role === "admin") return res.json("Invalid permission");
@@ -164,7 +165,7 @@ App.get("/api/depots/:role", (req, res) => {
     fetchQuery(res, DB, "SELECT * FROM AdminDepots");
 });
 
-App.get("/api/volunteers/:role", (req, res) => {
+App.get("/volunteers/:role/:email", (req, res) => {
     const { role } = req.params;
 
     if (!role === "admin") return res.json("Invalid permission");
@@ -172,7 +173,7 @@ App.get("/api/volunteers/:role", (req, res) => {
     fetchQuery(res, DB, "SELECT * FROM AdminVolunteers");
 });
 
-App.get("/api/victims/:role", (req, res) => {
+App.get("/victims/:role/:email", (req, res) => {
     const { role } = req.params;
 
     if (!role === "admin") return res.json("Invalid permission");
