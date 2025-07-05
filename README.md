@@ -1,5 +1,9 @@
 # Web Interface for Mayday Manager
 
+## Rebase Disclaimer
+
+The original most recent commit was made on May 9, 2025. On July 5, 2025, the repository history was rebased to correct the author of a commit that had been mistakenly associated with my personal GitHub account. This change was made to maintain a clear separation between my personal and professional accounts.
+
 ## Requirements
 
 * MySQL Server ([Installation Guide](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/))
